@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Irfan Gedik. All rights reserved.
+// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
+//
+
+
 // Referans: TurnPipeline ekleme noktaları. İsimler senkron; StubStep'ler
 // ilerde gerçek modüllere ayrışır.
 namespace Nyrvexa.Simulation.Architecture

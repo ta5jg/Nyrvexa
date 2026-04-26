@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Irfan Gedik. All rights reserved.
+// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
+//
+
+
 // Motor-bağımsız: dışa dönük sınırlar (dünya üret, zafer, ticaret) — dolduruldukça
 // TurnPipeline eşleştirilir; Unity veya ağ yok.
 using Nyrvexa.Simulation.Core;

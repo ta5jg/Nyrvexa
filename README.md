@@ -75,7 +75,7 @@ Bu depo, **Unity Hub ile doğrudan açılabilecek** minimal `ProjectSettings/Pro
 
 ## Sürümleme
 
-- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.5` söylenti lezzet + SimRunner sayaç).
+- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.6` dosya üst bilgisi + LICENSE).
 - **Changelog:** `CHANGELOG.md`
 - **Etiketler:** `vX.Y.Z` (Git etiketleri, imzalı sürümler ayrı politika).
 
@@ -87,7 +87,7 @@ Güvenlik açığı veya hassas bulgu raporları için: **`SECURITY.md`** (oluş
 
 ## Lisans
 
-**TBD** — telif metni eklendikten sonra bu bölüm `LICENSE` dosyası ile eşleşecek şekilde güncellenir.
+Depo kökünde `LICENSE` — şu an **tüm haklar saklı** (proprietary, açık kaynak lisansı yayımlanana kadar). Açık kaynağa veya başka modele geçildiğinde bu bölüm ve `LICENSE` birlikte güncellenir. Kaynak dosyaların başında telif satırları vardır; toplu güncelleme: `python3 scripts/apply_nyrvexa_file_headers.py` (yeni dosyalara idempotent ekleme).
 
 ## Marka notu (iç)
 

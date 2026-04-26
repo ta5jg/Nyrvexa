@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Irfan Gedik. All rights reserved.
+// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
+//
+
+
 namespace Nyrvexa.Simulation.Events
 {
     /// <summary> Söylenti <see cref="RumorRollEvent.Code"/> → kısa, nötr metin (M1: görünüm; mekanik yok). </summary>

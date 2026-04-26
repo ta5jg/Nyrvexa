@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Irfan Gedik. All rights reserved.
+// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
+//
+
+
 using System;
 using System.IO;
 using System.Text.Json;

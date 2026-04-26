@@ -1,3 +1,8 @@
+// Copyright (c) 2026 Irfan Gedik. All rights reserved.
+// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
+//
+
+
 namespace Nyrvexa.Simulation.World
 {
     /// <summary> M1: prosedürel biyom 1..6 (0 = ayrılmamış) kısa etiket — HUD/araç için. </summary>

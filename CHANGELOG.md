@@ -2,6 +2,14 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.6] — 2026-04-26
+
+### Added
+
+- `LICENSE`: telif (EN/TR) — geçici olarak tüm haklar saklı; ileride resmi lisansla değiştirilebilir.
+- Tüm `Assets/**/*.cs` ve `tools/**/*.cs` dosyalarına tutarlı üst bilgi (copyright + Nyrvexa + LICENSE referansı).
+- `scripts/apply_nyrvexa_file_headers.py`: yeni C# dosyalarına aynı üst bilgiyi idempotent eklemek için.
+
 ## [0.1.5] — 2026-04-26
 
 ### Added
