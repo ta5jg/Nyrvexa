@@ -2,6 +2,13 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.5] — 2026-04-26
+
+### Added
+
+- `RumorFlavorM1`: söylenti kodundan nötr, kısa lezzet cümleleri (HUD + ileri raporlama).
+- `SimRunner`: 10 tur sonrası olay otobüsünde `RumorRollEvent` sayacı; `tools/SimRunner/bin` repoda izlenmiyor (yalnız `dotnet build`).
+
 ## [0.1.4] — 2026-04-25
 
 ### Added

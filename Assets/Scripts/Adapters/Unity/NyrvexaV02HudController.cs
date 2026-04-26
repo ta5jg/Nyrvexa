@@ -1,6 +1,7 @@
 using System;
 using Nyrvexa.Simulation.Commands;
 using Nyrvexa.Simulation.Core;
+using Nyrvexa.Simulation.Events;
 using Nyrvexa.Simulation.Research;
 using Nyrvexa.Simulation.State;
 using Nyrvexa.Simulation.World;
@@ -300,9 +301,14 @@ namespace Nyrvexa.Adapters
             if (_rumorText != null)
             {
                 if (_session != null && _session.TryGetLastRumorRoll(out var rCode, out var rTurn))
-                    _rumorText.text = "Söylenti: T" + rTurn + "  #" + rCode.ToString("X8", System.Globalization.CultureInfo.InvariantCulture);
+                {
+                    var fl = RumorFlavorM1.GetLine(rCode);
+                    if (fl.Length > 72) fl = fl.Substring(0, 69) + "…";
+                    _rumorText.text = "Söylenti T" + rTurn + ": " + fl + "  (#"
+                        + rCode.ToString("X8", System.Globalization.CultureInfo.InvariantCulture) + ")";
+                }
                 else
-                    _rumorText.text = "Söylenti: henüz yok (nadir, RNG)";
+                    _rumorText.text = "Söylenti: henüz yok (düşük olasılık, RNG)";
             }
             var notOver = s.Header.DeclaredVictorFactionIndex < 0;
             if (_btnNextTurn != null)

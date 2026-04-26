@@ -97,6 +97,14 @@ static class Program
             pipeline.RunSingleTurn(state, rng);
             LogStocks("  tur sonu, endeks=" + state.Header.TurnIndex, state);
         }
+        {
+            int rumors = 0;
+            for (int hi = 0; hi < bus.History.Count; hi++)
+            {
+                if (bus.History[hi] is RumorRollEvent) rumors++;
+            }
+            Console.WriteLine("  Söylenti atışları (M1, ~%2/tur, " + Turns + " tur): " + rumors);
+        }
         state.CommandJournal.ClearBuffer();
         state.CommandJournal.Enqueue(new NoOpCommand(0));
         var ser = new PlainTextGameSerializer();
