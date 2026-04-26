@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
  *   TurnPipeline — Nyrvexa modülü (ayrıntı kaynakta).
@@ -73,6 +73,7 @@ namespace Nyrvexa.Simulation.Loop
                 new CityPopulationGrowthStep(),
                 new ResearchTickStep(),
                 new SightAndExplorationStep(),
+                new ScoutContactRumorStep(events),
                 new UnitIndexReconcileStep(),
                 new StubStep("Combat"),
                 new StubStep("Espionage"),

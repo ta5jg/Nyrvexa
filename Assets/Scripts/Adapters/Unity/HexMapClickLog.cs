@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
  *   Play: sol tık → XZ döşemeye ışın, ızgara sütun/satır ve düz indeks.

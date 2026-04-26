@@ -4,11 +4,10 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
- *   M1: çift yönlü diplo ızgarasında güveni 50'ye, gerginliği 0'a yavaş çeker
- *   (deterministik süzülme; CulturePressure sahte adımının ardından).
+ *   M1: çift yönlü diplo ızgarasında güveni 50'ye, gerginliği 0'a yavaş çeker.
  * 
  * License:
  *   Proprietary. All rights reserved. See LICENSE in the repository root.

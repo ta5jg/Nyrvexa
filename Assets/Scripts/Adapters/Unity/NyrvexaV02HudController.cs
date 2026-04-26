@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
  *   v0.2: tur, kaynak metinleri, Sonraki tur. Canvas yoksa çalma anında
@@ -52,6 +52,7 @@ namespace Nyrvexa.Adapters
         private Text _citiesDiploText;
         private Button _btnNextTurn;
         private Button _btnClearQueue;
+        private Button _btnNewGame;
         private Button _btnResearchSurvey;
         private Button _btnResearchAgri;
 
@@ -115,6 +116,24 @@ namespace Nyrvexa.Adapters
             {
                 if (_session == null) return;
                 _session.V02_ClearCommandQueue();
+            });
+            var newGameGo = new GameObject("NewGame", typeof(Button), typeof(Image));
+            newGameGo.transform.SetParent(panel.transform, false);
+            var ngrt = newGameGo.GetComponent<RectTransform>();
+            ngrt.anchorMin = new Vector2(0, 0);
+            ngrt.anchorMax = new Vector2(0, 0);
+            ngrt.pivot = new Vector2(0, 0);
+            ngrt.anchoredPosition = new Vector2(148, 8);
+            ngrt.sizeDelta = new Vector2(128, 32);
+            newGameGo.GetComponent<Image>().color = new Color(0.22f, 0.2f, 0.32f, 0.9f);
+            var ngt = NewText("YeniOyun", Vector2.zero, ngrt.sizeDelta, 12, TextAnchor.MiddleCenter, newGameGo.transform, ngrt);
+            ngt.text = "Yeni oyun";
+            ngt.raycastTarget = false;
+            _btnNewGame = newGameGo.GetComponent<Button>();
+            _btnNewGame.onClick.AddListener(() =>
+            {
+                if (_session == null) return;
+                _session.V02_StartNewSession();
             });
             var f0Go = new GameObject("FowF0", typeof(Button), typeof(Image));
             f0Go.transform.SetParent(panel.transform, false);
@@ -357,11 +376,16 @@ namespace Nyrvexa.Adapters
                 {
                     var fl = RumorFlavorM1.GetLine(rCode);
                     if (fl.Length > 72) fl = fl.Substring(0, 69) + "…";
+                    var cnt = _session != null ? _session.CountRumorRollEventsInBus() : 0;
                     _rumorText.text = "Söylenti T" + rTurn + ": " + fl + "  (#"
-                        + rCode.ToString("X8", System.Globalization.CultureInfo.InvariantCulture) + ")";
+                        + rCode.ToString("X8", System.Globalization.CultureInfo.InvariantCulture) + ")"
+                        + "  [toplam söylenti: " + cnt + "]";
                 }
                 else
-                    _rumorText.text = "Söylenti: henüz yok (düşük olasılık, RNG)";
+                {
+                    var cnt0 = _session != null ? _session.CountRumorRollEventsInBus() : 0;
+                    _rumorText.text = "Söylenti: son yok  [kayıt: " + cnt0 + " olay]";
+                }
             }
             var notOver = s.Header.DeclaredVictorFactionIndex < 0;
             if (_btnNextTurn != null)
@@ -370,6 +394,7 @@ namespace Nyrvexa.Adapters
                 _btnNextTurn.interactable = notOver && _session != null && (!step || _session.V02_CanStepMore());
             }
             if (_btnClearQueue != null) _btnClearQueue.interactable = notOver;
+            if (_btnNewGame != null) _btnNewGame.interactable = _session != null && _session.V02StepByStep;
             if (_btnResearchSurvey != null && _btnResearchAgri != null && s.Factions.Count > 0)
             {
                 var step = _session != null && _session.V02StepByStep;

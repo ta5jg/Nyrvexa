@@ -2,6 +2,18 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.9] — 2026-04-26
+
+### Added
+
+- `ScoutContactRumorStep`: F0/F1 `unit.scout` aynı heks komşuluğunda (≤1) iken `RumorRollEvent` atışı (~%25/tur, Crisis ile aynı kanal).
+- `GameSessionHost.V02_StartNewSession`: tohum karıştırma + Bootstrap; Context Menu; HUD **Yeni oyun** (yalnız v0.2 adım modu).
+- `CountRumorRollEventsInBus` + HUD’da söylenti toplam sayacı.
+
+### Fixed
+
+- `TrySave` diplo yük sonrası uyarı: sabit 50,10 beklentisi kaldırıldı; yalnız 0..100 dışı uyar.
+
 ## [0.1.8] — 2026-04-26
 
 ### Added

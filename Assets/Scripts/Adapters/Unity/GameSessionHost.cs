@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
  *   GameSessionHost — Nyrvexa modülü (ayrıntı kaynakta).
@@ -54,6 +54,8 @@ namespace Nyrvexa.Adapters
         [SerializeField] private bool _v02ReplaceScoutMoveInQueue = true;
         [Tooltip("Açık: adım modunda Space = sonraki tur.")]
         [SerializeField] private bool _v02SpaceToAdvanceTurn = true;
+        [Tooltip("Yeni oyun: dünya tohumunu karıştır (deterministik; tekrar oynatılabilir fark).")]
+        [SerializeField] private bool _v02NewGameRerollSeed = true;
         [Header("Biyom (M1)")]
         [Tooltip("Açık: Allocate sonrası seed’e bağlı deterministik biyom (1..6) boyar; kapat: tüm hücre defaultBiome (0) kalır.")]
         [SerializeField] private bool _paintProceduralBiomes = true;
@@ -74,6 +76,18 @@ namespace Nyrvexa.Adapters
         public int TurnsToSimulateLimit => _turnsToSimulate;
         public bool V02StepByStep => _v02StepByStepMode;
         public int V02SimulatedCount => _v02ScenarioTurnsSimulated;
+
+        /// <summary> Olay otobüsünde <see cref="RumorRollEvent"/> toplam adedi (Crisis + sınır fısıltı). </summary>
+        public int CountRumorRollEventsInBus()
+        {
+            if (_bus == null) return 0;
+            int n = 0;
+            for (int i = 0; i < _bus.History.Count; i++)
+            {
+                if (_bus.History[i] is RumorRollEvent) n++;
+            }
+            return n;
+        }
 
         /// <summary> Adım modunda bir sonraki turu oynatılabilir mi (kazanan yok, tur kotası dolmadı). </summary>
         public bool V02_CanStepMore()
@@ -166,6 +180,29 @@ namespace Nyrvexa.Adapters
             Bootstrap();
             if (_state != null) NotifyStateView();
         }
+
+        /// <summary> v0.2: oyunu sıfırla (aynı harita boyu; isteğe tohum değişir) ve Bootstrap. Yalnız adım modunda. </summary>
+        public void V02_StartNewSession()
+        {
+            if (!_v02StepByStepMode)
+            {
+                Debug.LogWarning("Nyrvexa: Yeni oyun yalnız v0.2 adım modunda. Inspector’da V02 Step By Step aç.");
+                return;
+            }
+            if (_v02NewGameRerollSeed) _worldSeed = MixWorldSeed(_worldSeed);
+            _state = null;
+            _bus = null;
+            _pipeline = null;
+            _v02ScenarioTurnsSimulated = 0;
+            EnsureBootstrapped();
+            if (_logEachTurn) Debug.Log("Nyrvexa: yeni oturum. tohum=0x" + _worldSeed.ToString("X") + "  adım=0");
+            NotifyStateView();
+        }
+
+        private static ulong MixWorldSeed(ulong s) => (s * 0x9E3779B97F4A7C15UL) ^ 0xBADC0D11DEADBEEFUL;
+
+        [ContextMenu("Nyrvexa v0.2/Yeni oyun (oturum sıfırla)")]
+        private void CtxV02StartNewSession() => V02_StartNewSession();
 
         [ContextMenu("Nyrvexa v0.2/Sonraki tur (adım modu)")]
         public void V02_AdvanceOneTurn()
@@ -309,8 +346,8 @@ namespace Nyrvexa.Adapters
                     if (back.Factions.Count >= 2)
                     {
                         back.Diplomacy.GetPair(0, 1, out var tr, out var te);
-                        if (tr != 50 || te != 10)
-                            Debug.LogWarning($"Nyrvexa: diplo yük: 0|1 = {tr},{te} (beklenti 50,10).");
+                        if (tr < 0 || tr > 100 || te < 0 || te > 100)
+                            Debug.LogWarning($"Nyrvexa: diplo yük (aralık dışı): 0|1 = {tr},{te}.");
                     }
                     if (back.World.Tiles != null && back.World.Tiles.Length > 23)
                     {

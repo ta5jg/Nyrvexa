@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.8
+ * Version:        0.1.9
  * 
  * Description:
  *   M1: prosedürel biyom 1..6 (0 = ayrılmamış) kısa etiket - HUD/araç için.
