@@ -1,0 +1,12 @@
+{
+  "name": "Nyrvexa.Editor",
+  "rootNamespace": "Nyrvexa.Editor",
+  "references": [
+    "Nyrvexa.Unity"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false
+}

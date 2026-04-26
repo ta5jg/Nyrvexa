@@ -1,0 +1,10 @@
+{
+  "name": "Nyrvexa.Unity",
+  "rootNamespace": "Nyrvexa.Adapters",
+  "references": [
+    "Nyrvexa.Simulation"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false
+}

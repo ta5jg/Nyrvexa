@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "archetypes": [
+    {
+      "id": "unit.scout",
+      "visionRange": 2,
+      "movementPerTurn": 2,
+      "combatPower": 1,
+      "defense": 1
+    }
+  ]
+}

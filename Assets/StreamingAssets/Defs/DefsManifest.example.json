@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "version": "0.0.0",
+  "defs": {
+    "technologies": [],
+    "unitArchetypes": [],
+    "buildings": [],
+    "cultures": [],
+    "governments": [],
+    "ideologies": [],
+    "victoryConditions": []
+  }
+}

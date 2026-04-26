@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Nyrvexa.SimRunner</RootNamespace>
+    <!-- Paylaşılan Assets/Scripts/Simulation kaynaklarının nullability/Equals uyarıları; headless sim çıktısını sadeleştirir. -->
+    <NoWarn>$(NoWarn);CS8765;CS8618;CS8601;CS8600;CS8604</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Assets\Scripts\Simulation\**\*.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="UnitJsonNet.cs" />
+  </ItemGroup>
+</Project>
