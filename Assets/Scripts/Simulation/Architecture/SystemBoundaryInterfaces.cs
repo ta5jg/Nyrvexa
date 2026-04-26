@@ -1,10 +1,19 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
+/* =============================================================================
+ * File:           Assets/Scripts/Simulation/Architecture/SystemBoundaryInterfaces.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   Aynı seed + parametreyle deterministik doldurma (MP sonrası: senkron ağ
+ *   otoritesi).
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
-
-// Motor-bağımsız: dışa dönük sınırlar (dünya üret, zafer, ticaret) — dolduruldukça
-// TurnPipeline eşleştirilir; Unity veya ağ yok.
 using Nyrvexa.Simulation.Core;
 using Nyrvexa.Simulation.Loop;
 using Nyrvexa.Simulation.State;

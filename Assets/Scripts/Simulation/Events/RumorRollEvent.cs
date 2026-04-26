@@ -1,7 +1,18 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
-
+/* =============================================================================
+ * File:           Assets/Scripts/Simulation/Events/RumorRollEvent.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   Deterministik "olay" aşamasından düşen kod (M1: ileri HUD/rapor; mekanik
+ *   yok).
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
 namespace Nyrvexa.Simulation.Events
 {

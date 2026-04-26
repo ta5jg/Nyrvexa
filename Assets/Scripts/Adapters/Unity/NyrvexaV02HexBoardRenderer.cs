@@ -1,7 +1,17 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
-
+/* =============================================================================
+ * File:           Assets/Scripts/Adapters/Unity/NyrvexaV02HexBoardRenderer.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   v0.2: oyun durumundaki hücreleri (F0 FOW + sahip) renklendirir.
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
 using Nyrvexa.Simulation.Core;
 using Nyrvexa.Simulation.State;

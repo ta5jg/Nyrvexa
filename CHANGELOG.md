@@ -2,6 +2,14 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.7] — 2026-04-26
+
+### Changed
+
+- C# dosya başları: Q-Verse / USDTgVerse tarzı `/* … */` blok (File, Author, Developer, tarihler, Version, Description, License — proprietary).
+- `scripts/apply_nyrvexa_file_headers.py`: açıklama için önce `public|internal` + `class|struct|…` üstündeki `<summary>`; yoksa dosya adı yedeği; `static class` (SimRunner) desteklenir.
+- `LICENSE`: USDTG GROUP TECHNOLOGY LLC + Irfan Gedik telif satırı.
+
 ## [0.1.6] — 2026-04-26
 
 ### Added

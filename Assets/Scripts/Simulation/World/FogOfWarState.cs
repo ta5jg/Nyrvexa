@@ -1,7 +1,18 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
-
+/* =============================================================================
+ * File:           Assets/Scripts/Simulation/World/FogOfWarState.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   Keşif maskesine yazar; görüş halkası ileride birim menzilinden yeniden
+ *   hesaplanır.
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
 using System;
 

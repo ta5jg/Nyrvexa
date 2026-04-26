@@ -1,10 +1,18 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
+/* =============================================================================
+ * File:           Assets/Scripts/Simulation/Architecture/TurnPhasesCatalog.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   Sistem 1–30 ile TurnPipeline aşamaları arasında sembolik eşleme.
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
-
-// Referans: TurnPipeline ekleme noktaları. İsimler senkron; StubStep'ler
-// ilerde gerçek modüllere ayrışır.
 namespace Nyrvexa.Simulation.Architecture
 {
     /// <summary> Sistem 1–30 ile TurnPipeline aşamaları arasında sembolik eşleme. </summary>

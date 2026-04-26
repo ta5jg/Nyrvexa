@@ -1,7 +1,18 @@
-// Copyright (c) 2026 Irfan Gedik. All rights reserved.
-// This file is part of Nyrvexa. Licensing: see LICENSE in the repository root (TBD).
-//
-
+/* =============================================================================
+ * File:           Assets/Scripts/Simulation/Loop/Steps/ResearchTickStep.cs
+ * Author:         USDTG GROUP TECHNOLOGY LLC
+ * Developer:      Irfan Gedik
+ * Created Date:   2026-04-26
+ * Last Update:    2026-04-26
+ * Version:        0.1.7
+ * 
+ * Description:
+ *   ABP: üs + şehir bonusu, sonra kuyruktaki teknolojiye harcanır; bittiğinde
+ *   sıradaki (M1 katalog) açılır.
+ * 
+ * License:
+ *   Proprietary. All rights reserved. See LICENSE in the repository root.
+ * ============================================================================= */
 
 using Nyrvexa.Simulation.Core;
 using Nyrvexa.Simulation.Loop;

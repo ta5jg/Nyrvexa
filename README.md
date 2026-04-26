@@ -75,7 +75,7 @@ Bu depo, **Unity Hub ile doğrudan açılabilecek** minimal `ProjectSettings/Pro
 
 ## Sürümleme
 
-- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.6` dosya üst bilgisi + LICENSE).
+- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.7` Q-Verse tarzı dosya başlığı).
 - **Changelog:** `CHANGELOG.md`
 - **Etiketler:** `vX.Y.Z` (Git etiketleri, imzalı sürümler ayrı politika).
 
@@ -87,7 +87,9 @@ Güvenlik açığı veya hassas bulgu raporları için: **`SECURITY.md`** (oluş
 
 ## Lisans
 
-Depo kökünde `LICENSE` — şu an **tüm haklar saklı** (proprietary, açık kaynak lisansı yayımlanana kadar). Açık kaynağa veya başka modele geçildiğinde bu bölüm ve `LICENSE` birlikte güncellenir. Kaynak dosyaların başında telif satırları vardır; toplu güncelleme: `python3 scripts/apply_nyrvexa_file_headers.py` (yeni dosyalara idempotent ekleme).
+Depo kökünde `LICENSE` — şu an **tüm haklar saklı** (proprietary, açık kaynak lisansı yayımlanana kadar). Açık kaynağa veya başka modele geçildiğinde bu bölüm ve `LICENSE` birlikte güncellenir.
+
+**Dosya üst bilgisi (C#):** Q-Verse / USDTgVerse ile aynı blok yapı — `File`, `Author` (USDTG GROUP TECHNOLOGY LLC), `Developer` (Irfan Gedik), tarihler, `Version` (CHANGELOG’tan), `Description` (mümkünse sınıf `<summary>`), `License` (proprietary + `LICENSE` atfı). Toplu güncelleme: `python3 scripts/apply_nyrvexa_file_headers.py`.
 
 ## Marka notu (iç)
 
