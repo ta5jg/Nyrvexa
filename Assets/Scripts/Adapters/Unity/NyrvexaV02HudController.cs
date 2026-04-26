@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.9
+ * Version:        0.1.10
  * 
  * Description:
  *   v0.2: tur, kaynak metinleri, Sonraki tur. Canvas yoksa çalma anında
@@ -366,9 +366,15 @@ namespace Nyrvexa.Adapters
             {
                 var w = s.Header.DeclaredVictorFactionIndex;
                 if (w < 0)
+                {
                     _victoryText.text = "Kazanan: — (T≥8 şehir+yiy+ür)";
+                    _victoryText.color = Color.white;
+                }
                 else
-                    _victoryText.text = "Kazanan: F" + w + " — oyun bitti; Sonraki tur yok";
+                {
+                    _victoryText.text = "KAZANAN: F" + w + "  —  oyun bitti; Sonraki tur kilitli";
+                    _victoryText.color = new Color(1f, 0.82f, 0.15f, 1f);
+                }
             }
             if (_rumorText != null)
             {

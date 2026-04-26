@@ -2,6 +2,15 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.10] — 2026-04-26
+
+### Added
+
+- `SimpleRivalScoutBrain`: ~%40 olasılıkla F0 keşifçiye merkez mesafeyi azaltan komşu (takip); aksi halde önceki rastgele yön sırası.
+- `GameSessionHost.V02_ExportSaveToFile` + Context Menu — `persistentDataPath/nyrvexa_last_save.txt`.
+- HUD: kazanan satırı altın ton + “KAZANAN” vurgusu.
+- `SimRunner`: `--turns=N` (1…5000, varsayılan 10).
+
 ## [0.1.9] — 2026-04-26
 
 ### Added

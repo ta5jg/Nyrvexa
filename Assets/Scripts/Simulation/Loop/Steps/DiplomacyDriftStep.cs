@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.9
+ * Version:        0.1.10
  * 
  * Description:
  *   M1: çift yönlü diplo ızgarasında güveni 50'ye, gerginliği 0'a yavaş çeker.

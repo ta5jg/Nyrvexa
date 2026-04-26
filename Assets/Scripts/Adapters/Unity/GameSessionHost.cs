@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.9
+ * Version:        0.1.10
  * 
  * Description:
  *   GameSessionHost — Nyrvexa modülü (ayrıntı kaynakta).
@@ -13,6 +13,7 @@
  *   Proprietary. All rights reserved. See LICENSE in the repository root.
  * ============================================================================= */
 
+using System.IO;
 using Nyrvexa.Simulation.Architecture;
 using Nyrvexa.Simulation.Commands;
 using Nyrvexa.Simulation.Core;
@@ -203,6 +204,25 @@ namespace Nyrvexa.Adapters
 
         [ContextMenu("Nyrvexa v0.2/Yeni oyun (oturum sıfırla)")]
         private void CtxV02StartNewSession() => V02_StartNewSession();
+
+        /// <summary> NYRVEXA_V1 metnini persistentDataPath altına (nyrvexa_last_save.txt) yazar; paylaşım / yedek. </summary>
+        [ContextMenu("Nyrvexa v0.2/Kaydı diske yaz (nyrvexa_last_save.txt)")]
+        public void V02_ExportSaveToFile()
+        {
+            if (_state == null) { Debug.LogWarning("Nyrvexa: kayıt için oturum yok."); return; }
+            try
+            {
+                var ser = new PlainTextGameSerializer();
+                var text = ser.SerializeGameState(_state);
+                var path = Path.Combine(Application.persistentDataPath, "nyrvexa_last_save.txt");
+                File.WriteAllText(path, text);
+                Debug.Log("Nyrvexa: kayıt yazıldı — " + path);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Nyrvexa: dışa kayıt hatası: " + e.Message);
+            }
+        }
 
         [ContextMenu("Nyrvexa v0.2/Sonraki tur (adım modu)")]
         public void V02_AdvanceOneTurn()

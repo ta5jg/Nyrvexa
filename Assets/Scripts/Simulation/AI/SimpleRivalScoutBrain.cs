@@ -4,11 +4,11 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.9
+ * Version:        0.1.10
  * 
  * Description:
- *   Fraksiyon 1: her tur bitişik rastgele (deterministik) yasal hücreye keşifçi
- *   sür.
+ *   F1: yasal bitişik; ~%40 ihtimalle F0 keşifçiye göre en kısa merkez
+ *   mesafesine (takip), aksi halde yön karıştır + ilk yasal (önceki davranış).
  * 
  * License:
  *   Proprietary. All rights reserved. See LICENSE in the repository root.
@@ -23,7 +23,8 @@ using Nyrvexa.Simulation.World;
 
 namespace Nyrvexa.Simulation.AI
 {
-    /// <summary> Fraksiyon 1: her tur bitişik rastgele (deterministik) yasal hücreye keşifçi sür. </summary>
+    /// <summary> F1: yasal bitişik; ~%40 ihtimalle F0 keşifçiye göre en kısa merkez mesafesine (takip), aksi
+    ///   halde yön karıştır + ilk yasal (önceki davranış). </summary>
     public sealed class SimpleRivalScoutBrain : IStrategicBrain
     {
         public void QueueStrategicActions(int factionIndex, GameStateRoot state, CommandJournal journal, TurnContext ctx)
@@ -55,9 +56,49 @@ namespace Nyrvexa.Simulation.AI
             return c != 0 ? c : a.Generation.CompareTo(b.Generation);
         }
 
+        private static bool TryGetScoutTileOfFaction(GameStateRoot s, int faction, out int flat)
+        {
+            flat = -1;
+            foreach (var kv in s.Units)
+            {
+                if (kv.Value.FactionIndex != faction) continue;
+                if (kv.Value.Archetype.Key != "unit.scout") continue;
+                flat = kv.Value.TileIndex;
+                return true;
+            }
+            return false;
+        }
+
         private static bool TryChooseNeighborIndex(GameStateRoot s, in UnitState u, ref DeterministicRng rng, out int target)
         {
             target = -1;
+            var legals = new int[6];
+            int nL = 0;
+            for (int d = 0; d < 6; d++)
+            {
+                int ti = s.World.GetNeighborIndex(u.TileIndex, d);
+                if (ti < 0) continue;
+                if (!IsLegalMoveTo(s, in u, ti)) continue;
+                legals[nL++] = ti;
+            }
+            if (nL == 0) return false;
+            if (u.FactionIndex == 1 && TryGetScoutTileOfFaction(s, 0, out var f0) && (rng.NextU64() % 5ul) < 2ul)
+            {
+                int best = legals[0];
+                int bestDist = s.World.AxialDistanceBetween(f0, best);
+                for (int i = 1; i < nL; i++)
+                {
+                    int ti = legals[i];
+                    int d = s.World.AxialDistanceBetween(f0, ti);
+                    if (d < bestDist || (d == bestDist && ti < best))
+                    {
+                        bestDist = d;
+                        best = ti;
+                    }
+                }
+                target = best;
+                return true;
+            }
             var order = new int[6];
             for (int d = 0; d < 6; d++) order[d] = d;
             for (int n = 5; n > 0; n--)

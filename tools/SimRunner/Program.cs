@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.9
+ * Version:        0.1.10
  * 
  * Description:
  *   Unity yok: macOS / M2'de sadece dotnet run ile aynı simülasyonu çalıştır.
@@ -38,10 +38,18 @@ using static Nyrvexa.Simulation.World.WorldMapDefaults;
 /// </summary>
 static class Program
 {
-    private const int Turns = 10;
-
-    static int Main()
+    static int Main(string[] args)
     {
+        int turns = 10;
+        for (int i = 0; i < args.Length; i++)
+        {
+            var a = args[i];
+            if (a.StartsWith("--turns=", StringComparison.Ordinal)
+                && int.TryParse(a.AsSpan("--turns=".Length), out var t)
+                && t > 0 && t <= 5000)
+                turns = t;
+        }
+
         if (!PointyLayout.VerifyInversionAllCells(1f, MapWidth, MapHeight))
         {
             Console.Error.WriteLine("HATA: heks ileri/geri tersleme (PointyLayout) — regresyon.");
@@ -101,7 +109,7 @@ static class Program
         state.UnitOnTile[18] = rivalId;
         FogRevealService.RevealDisk(state.World, 18, 2, 1);
         var pipeline = TurnPipeline.CreateDefault(bus, state.CommandJournal);
-        for (int i = 0; i < Turns; i++)
+        for (int i = 0; i < turns; i++)
         {
             if (i == 0)
             {
@@ -124,7 +132,7 @@ static class Program
             {
                 if (bus.History[hi] is RumorRollEvent) rumors++;
             }
-            Console.WriteLine("  Söylenti atışları (M1, ~%2/tur, " + Turns + " tur): " + rumors);
+            Console.WriteLine("  Söylenti atışları (M1, ~%2/tur, " + turns + " tur): " + rumors);
         }
         state.CommandJournal.ClearBuffer();
         state.CommandJournal.Enqueue(new NoOpCommand(0));
@@ -149,14 +157,14 @@ static class Program
         if (back.Factions.Count >= 2)
         {
             back.Diplomacy.GetPair(0, 1, out var tr, out var te);
-            Console.WriteLine("  Diplo 0|1 = " + tr + "," + te + " (drift sonrası: güv~50, gerg~0 @10 tur)");
+            Console.WriteLine("  Diplo 0|1 = " + tr + "," + te + " (M1 diplo sürüklenmesi, " + turns + " tur sim)");
         }
         if (back.World.Tiles is { Length: > 23 })
             Console.WriteLine("  k23 ExploredMask (F0) = " + (back.World.Tiles[23].ExploredMask & 1));
         if (back.Header.DeclaredVictorFactionIndex >= 0)
             Console.WriteLine("  Kazanan (T≥8 ekonomi): F" + back.Header.DeclaredVictorFactionIndex);
         else
-            Console.WriteLine("  Kazanan: henüz yok (T<8 veya 10 tura yetişmedi).");
+            Console.WriteLine("  Kazanan: henüz yok (T<8 veya " + turns + " tura yetişmedi).");
         Console.WriteLine("Bitti. Unity olmadan simülasyon OK.");
         return 0;
     }

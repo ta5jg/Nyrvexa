@@ -57,7 +57,7 @@ Bu depo, **Unity Hub ile doğrudan açılabilecek** minimal `ProjectSettings/Pro
 ## Geliştirme
 
 1. **Gereksinimler:** Unity Editor (2022.3 LTS, `ProjectVersion.txt` ile hizalı), Git; LFS büyük varlıklar için ayrı karar.
-2. **Headless sim (CI / terminal):** depo kökünde `make sim` (veya `cd tools/SimRunner` → `dotnet run -c Release`) — aynı `Nyrvexa.Simulation` derlemesi, `Assets/StreamingAssets/Defs/units.example.json` birim kataloğu ile.
+2. **Headless sim (CI / terminal):** depo kökünde `make sim` (veya `cd tools/SimRunner` → `dotnet run -c Release`) — aynı `Nyrvexa.Simulation` derlemesi, `Assets/StreamingAssets/Defs/units.example.json` birim kataloğu ile. Tur sayısı: `dotnet run -c Release -- --turns=25` (varsayılan 10).
 3. **Birim JSON:** Yeni tipler `Defs/*.json` içine (schema 1) eklenir; `GameSessionHost` üzerinde `Load Unit Defs From Streaming` açıkken `Unit Defs File Name` yolu `Assets/StreamingAssets/Defs/` altındaki dosya adıdır.
 4. **CI:** `.github/workflows/nyrvexa-sim.yml` — Ubuntu’da `SimRunner` derlenir ve çalıştırılır (Unity lisansı gerekmez).
 5. **Sahne:** `File → New Scene` → `Assets/Scenes/Bootstrap.unity` olarak kayıt; `GameSessionHost` ekle, `Run On Start` veya Context Menu senaryo.
@@ -75,7 +75,7 @@ Bu depo, **Unity Hub ile doğrudan açılabilecek** minimal `ProjectSettings/Pro
 
 ## Sürümleme
 
-- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.9` sınır söylentisi, yeni oyun, söylenti sayacı).
+- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.10` rakip takip eğilimi, dışa kayıt, SimRunner `--turns`).
 - **Changelog:** `CHANGELOG.md`
 - **Etiketler:** `vX.Y.Z` (Git etiketleri, imzalı sürümler ayrı politika).
 
