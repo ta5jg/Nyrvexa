@@ -9,6 +9,10 @@ Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numarala
 - `RumorFlavorM1`: söylenti kodundan nötr, kısa lezzet cümleleri (HUD + ileri raporlama).
 - `SimRunner`: 10 tur sonrası olay otobüsünde `RumorRollEvent` sayacı; `tools/SimRunner/bin` repoda izlenmiyor (yalnız `dotnet build`).
 
+### Changed
+
+- `InMemoryEventBus`: `TryGetLastOfType<T>`; `GameSessionHost.TryGetLastRumorRoll` tarama burada tekilleşti.
+
 ## [0.1.4] — 2026-04-25
 
 ### Added

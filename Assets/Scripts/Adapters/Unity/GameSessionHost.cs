@@ -91,16 +91,10 @@ namespace Nyrvexa.Adapters
             code = 0;
             turn = 0;
             if (_bus == null) return false;
-            for (int i = _bus.History.Count - 1; i >= 0; i--)
-            {
-                if (_bus.History[i] is RumorRollEvent e)
-                {
-                    code = e.Code;
-                    turn = e.Turn;
-                    return true;
-                }
-            }
-            return false;
+            if (!_bus.TryGetLastOfType<RumorRollEvent>(out var e)) return false;
+            code = e.Code;
+            turn = e.Turn;
+            return true;
         }
 
         /// <summary> Rakip (F1) keşifçi düz indeks. </summary>

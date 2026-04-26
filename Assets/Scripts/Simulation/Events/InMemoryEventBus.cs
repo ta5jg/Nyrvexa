@@ -15,5 +15,20 @@ namespace Nyrvexa.Simulation.Events
         }
 
         public void Clear() => _history.Clear();
+
+        /// <summary> Geçmişte bu türden son olay (yoksa false). </summary>
+        public bool TryGetLastOfType<T>(out T evt) where T : class, IGameEvent
+        {
+            for (int i = _history.Count - 1; i >= 0; i--)
+            {
+                if (_history[i] is T t)
+                {
+                    evt = t;
+                    return true;
+                }
+            }
+            evt = default!;
+            return false;
+        }
     }
 }
