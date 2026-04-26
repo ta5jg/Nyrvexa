@@ -23,6 +23,10 @@
 *.opendb
 *.VC.db
 
+# SimRunner build output (dotnet publish/run — repoda binary tutulmaz)
+tools/SimRunner/bin/
+tools/SimRunner/obj/
+
 # Artifacts
 /Recordings/
 *.apk
