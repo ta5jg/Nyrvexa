@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.7
+ * Version:        0.1.8
  * 
  * Description:
  *   v0.2: tur, kaynak metinleri, Sonraki tur. Canvas yoksa çalma anında
@@ -49,6 +49,7 @@ namespace Nyrvexa.Adapters
         private Text _rumorText;
         private Text _fowHintText;
         private Text _rivalText;
+        private Text _citiesDiploText;
         private Button _btnNextTurn;
         private Button _btnClearQueue;
         private Button _btnResearchSurvey;
@@ -82,18 +83,20 @@ namespace Nyrvexa.Adapters
             prt.anchorMax = new Vector2(0, 1);
             prt.pivot = new Vector2(0, 1);
             prt.anchoredPosition = new Vector2(16, -12);
-            prt.sizeDelta = new Vector2(560, 420);
+            prt.sizeDelta = new Vector2(580, 450);
             panel.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
             _turnText = NewText("Turn", new Vector2(8, -8), new Vector2(400, 26), 18, TextAnchor.UpperLeft, root.transform, prt);
             _queueText = NewText("Queue", new Vector2(8, -36), new Vector2(520, 22), 13, TextAnchor.UpperLeft, root.transform, prt);
             _scoutText = NewText("Scout", new Vector2(8, -58), new Vector2(400, 24), 14, TextAnchor.UpperLeft, root.transform, prt);
             _rivalText = NewText("Rival", new Vector2(8, -80), new Vector2(400, 22), 13, TextAnchor.UpperLeft, root.transform, prt);
-            _f0Text = NewText("F0", new Vector2(8, -106), new Vector2(400, 26), 16, TextAnchor.UpperLeft, root.transform, prt);
-            _f1Text = NewText("F1", new Vector2(8, -134), new Vector2(400, 26), 16, TextAnchor.UpperLeft, root.transform, prt);
-            _victoryText = NewText("Victory", new Vector2(8, -162), new Vector2(400, 24), 14, TextAnchor.UpperLeft, root.transform, prt);
-            _rumorText = NewText("Rumor", new Vector2(8, -188), new Vector2(520, 22), 12, TextAnchor.UpperLeft, root.transform, prt);
+            _citiesDiploText = NewText("CitiesDiplo", new Vector2(8, -102), new Vector2(540, 32), 12, TextAnchor.UpperLeft, root.transform, prt);
+            _citiesDiploText.color = new Color(0.9f, 0.95f, 0.88f, 1f);
+            _f0Text = NewText("F0", new Vector2(8, -138), new Vector2(400, 26), 16, TextAnchor.UpperLeft, root.transform, prt);
+            _f1Text = NewText("F1", new Vector2(8, -168), new Vector2(400, 26), 16, TextAnchor.UpperLeft, root.transform, prt);
+            _victoryText = NewText("Victory", new Vector2(8, -196), new Vector2(400, 24), 14, TextAnchor.UpperLeft, root.transform, prt);
+            _rumorText = NewText("Rumor", new Vector2(8, -222), new Vector2(520, 22), 12, TextAnchor.UpperLeft, root.transform, prt);
             _rumorText.color = new Color(0.95f, 0.85f, 0.7f, 1f);
-            _fowHintText = NewText("FowHint", new Vector2(8, -214), new Vector2(400, 20), 12, TextAnchor.UpperLeft, root.transform, prt);
+            _fowHintText = NewText("FowHint", new Vector2(8, -248), new Vector2(400, 20), 12, TextAnchor.UpperLeft, root.transform, prt);
             _fowHintText.text = "Sis: F0=sen, F1=rakip (hex + minimap).";
             _fowHintText.color = new Color(0.85f, 0.9f, 1f, 1f);
             var clearGo = new GameObject("ClearQueue", typeof(Button), typeof(Image));
@@ -262,6 +265,33 @@ namespace Nyrvexa.Adapters
             _mapChrome?.SetViewAsFaction(faction);
         }
 
+        private static string BuildCitiesDiploLine(GameStateRoot s)
+        {
+            var b = new System.Text.StringBuilder();
+            b.Append("Şehir: ");
+            if (s.Cities == null || s.Cities.Count == 0)
+                b.Append("—");
+            else
+            {
+                int k = 0;
+                foreach (var kv in s.Cities)
+                {
+                    var c = kv.Value;
+                    if (k++ > 0) b.Append("  ·  ");
+                    var name = (c.Name ?? "?").Replace("|", " ");
+                    if (name.Length > 12) name = name.Substring(0, 10) + "…";
+                    b.Append(name).Append("@").Append(c.TileIndex).Append(" pop").Append(c.Population);
+                }
+            }
+            if (s.Diplomacy != null && s.Factions.Count >= 2)
+            {
+                s.Diplomacy.GetPair(0, 1, out var tr, out var te);
+                b.Append("  |  Diplo 0↔1: güv").Append(tr).Append("  gerg").Append(te);
+            }
+            var t = b.ToString();
+            return t.Length > 155 ? t.Substring(0, 152) + "…" : t;
+        }
+
         private void Refresh()
         {
             if (_turnText == null) return;
@@ -276,16 +306,20 @@ namespace Nyrvexa.Adapters
             else
                 _turnText.text = "Tur: T" + s.Header.TurnIndex;
             if (_queueText != null) _queueText.text = BuildQueueText(s);
+            if (_citiesDiploText != null) _citiesDiploText.text = BuildCitiesDiploLine(s);
             if (_scoutText != null)
             {
                 if (_session != null && _session.TryGetScoutCurrentTileIndex(out var cur)
                     && s.World.Tiles != null && cur >= 0 && cur < s.World.Tiles.Length)
                 {
                     var bio = BiomeM1Names.TryGet(s.World.Tiles[cur].BiomeId);
+                    var mp = "";
+                    if (s.Units.TryGetValue(_session.ScoutUnitId, out var su) && su.Id.IsValid)
+                        mp = "  MP" + su.MovementPoints + "/" + su.MaxMovement;
                     if (_session.TryGetPendingScoutMoveTarget(out var tgt))
-                        _scoutText.text = "Keşif (F0): düz " + cur + " " + bio + "  →  " + tgt;
+                        _scoutText.text = "Keşif (F0): düz " + cur + " " + bio + "  →  " + tgt + mp;
                     else
-                        _scoutText.text = "Keşif (F0): düz " + cur + " " + bio;
+                        _scoutText.text = "Keşif (F0): düz " + cur + " " + bio + mp;
                 }
                 else
                     _scoutText.text = "Keşif (F0): —";
@@ -296,10 +330,13 @@ namespace Nyrvexa.Adapters
                     && s.World.Tiles != null && rcur >= 0 && rcur < s.World.Tiles.Length)
                 {
                     var rb = BiomeM1Names.TryGet(s.World.Tiles[rcur].BiomeId);
+                    var rmp = "";
+                    if (s.Units.TryGetValue(_session.RivalScoutUnitId, out var ru) && ru.Id.IsValid)
+                        rmp = "  MP" + ru.MovementPoints + "/" + ru.MaxMovement;
                     if (_session.TryGetPendingRivalScoutMoveTarget(out var rt))
-                        _rivalText.text = "Rakip (F1): düz " + rcur + " " + rb + "  →  " + rt;
+                        _rivalText.text = "Rakip (F1): düz " + rcur + " " + rb + "  →  " + rt + rmp;
                     else
-                        _rivalText.text = "Rakip (F1): düz " + rcur + " " + rb;
+                        _rivalText.text = "Rakip (F1): düz " + rcur + " " + rb + rmp;
                 }
                 else
                     _rivalText.text = "Rakip (F1): —";

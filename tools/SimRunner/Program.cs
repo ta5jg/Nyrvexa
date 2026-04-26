@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.7
+ * Version:        0.1.8
  * 
  * Description:
  *   Unity yok: macOS / M2'de sadece dotnet run ile aynı simülasyonu çalıştır.
@@ -111,6 +111,11 @@ static class Program
                 state.CommandJournal.Enqueue(new MoveUnitCommand(0, scoutId, 24));
             }
             pipeline.RunSingleTurn(state, rng);
+            if (!TryVerifyWorldInvariants(state, out var invErr))
+            {
+                Console.Error.WriteLine("  HATA: simülasyon değişmezi: " + invErr);
+                return 1;
+            }
             LogStocks("  tur sonu, endeks=" + state.Header.TurnIndex, state);
         }
         {
@@ -144,7 +149,7 @@ static class Program
         if (back.Factions.Count >= 2)
         {
             back.Diplomacy.GetPair(0, 1, out var tr, out var te);
-            Console.WriteLine("  Diplo 0|1 = " + tr + "," + te + " (beklenti 50,10)");
+            Console.WriteLine("  Diplo 0|1 = " + tr + "," + te + " (drift sonrası: güv~50, gerg~0 @10 tur)");
         }
         if (back.World.Tiles is { Length: > 23 })
             Console.WriteLine("  k23 ExploredMask (F0) = " + (back.World.Tiles[23].ExploredMask & 1));
@@ -154,6 +159,40 @@ static class Program
             Console.WriteLine("  Kazanan: henüz yok (T<8 veya 10 tura yetişmedi).");
         Console.WriteLine("Bitti. Unity olmadan simülasyon OK.");
         return 0;
+    }
+
+    private static bool TryVerifyWorldInvariants(GameStateRoot s, out string err)
+    {
+        err = "";
+        foreach (var kv in s.Units)
+        {
+            var u = kv.Value;
+            if (!s.UnitOnTile.TryGetValue(u.TileIndex, out var on) || on != kv.Key)
+            {
+                err = "UnitOnTile birim/düz uyumsuz";
+                return false;
+            }
+        }
+        foreach (var kv in s.UnitOnTile)
+        {
+            if (!s.Units.TryGetValue(kv.Value, out var u) || u.TileIndex != kv.Key)
+            {
+                err = "UnitOnTile sözlük tutarsız";
+                return false;
+            }
+        }
+        for (int f = 0; f < s.Factions.Count; f++)
+        {
+            foreach (var rs in s.Factions[f].ResourceStock)
+            {
+                if (rs.Value < 0)
+                {
+                    err = "Negatif stok: " + rs.Key.Key;
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static bool FactionEconomyEquals(GameStateRoot a, GameStateRoot b)

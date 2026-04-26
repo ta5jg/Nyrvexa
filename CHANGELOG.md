@@ -2,6 +2,14 @@
 
 Tüm anlamlı sürümler [Semantic Versioning](https://semver.org/) ile numaralandırılır.
 
+## [0.1.8] — 2026-04-26
+
+### Added
+
+- `DiplomacyDriftStep`: F0–F1 (ve genel çift) için güven → 50, gerginlik → 0 yumuşak süzülme; pipeline’da zaferden önce.
+- HUD: şehir listesi (ad@düz, nüfus) + `Diplo 0↔1` satırı; keşifçi satırlarında **MP** gösterimi.
+- `SimRunner`: `TryVerifyWorldInvariants` (birim/düz tutarlılığı, stok ≥ 0) her tur.
+
 ## [0.1.7] — 2026-04-26
 
 ### Changed

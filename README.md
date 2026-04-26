@@ -75,7 +75,7 @@ Bu depo, **Unity Hub ile doğrudan açılabilecek** minimal `ProjectSettings/Pro
 
 ## Sürümleme
 
-- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.7` Q-Verse tarzı dosya başlığı).
+- **Sürüm:** [Semantic Versioning 2.0.0](https://semver.org/); ayrıntı: `CHANGELOG.md` (güncel: `0.1.8` diplo süzülme, HUD şehir/MP, SimRunner değişmezler).
 - **Changelog:** `CHANGELOG.md`
 - **Etiketler:** `vX.Y.Z` (Git etiketleri, imzalı sürümler ayrı politika).
 

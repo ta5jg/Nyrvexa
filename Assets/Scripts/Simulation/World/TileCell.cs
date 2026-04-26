@@ -4,7 +4,7 @@
  * Developer:      Irfan Gedik
  * Created Date:   2026-04-26
  * Last Update:    2026-04-26
- * Version:        0.1.7
+ * Version:        0.1.8
  * 
  * Description:
  *   TileCell — Nyrvexa modülü (ayrıntı kaynakta).
