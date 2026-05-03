@@ -58,16 +58,19 @@ export function App() {
     if (state) saveAutosave(state);
   }, [state]);
 
-  // Hint auto-dismiss
+  // Hint auto-dismiss (tutorial hints linger longer than transient errors).
   useEffect(() => {
     if (!hint) return;
-    const t = window.setTimeout(() => setHint(null), 2400);
+    const isTutorial = hint.includes("settler") || hint.includes("End turn");
+    const t = window.setTimeout(() => setHint(null), isTutorial ? 5500 : 2400);
     return () => window.clearTimeout(t);
   }, [hint]);
 
   const startGame = useCallback((opts: { player: FactionId; opponent: FactionId; seed: string }) => {
     const fresh = newGame({
       seed: opts.seed,
+      width: 22,
+      height: 16,
       players: [
         { isHuman: true, factionId: opts.player },
         { isHuman: false, factionId: opts.opponent }
@@ -76,6 +79,7 @@ export function App() {
     setState(fresh);
     setSelUnitId(null);
     setSelCityId(null);
+    setHint("Tap your settler, walk to a fertile tile, then Found city.");
   }, []);
 
   const startNewMatch = useCallback(() => {

@@ -91,10 +91,21 @@ export function GameCanvas(props: Props) {
 
         attachInput(app.canvas, worldRoot, cameraRef, props);
 
-        // Center camera on the world initially.
-        const center = worldCenter(props.state);
-        cameraRef.current.x = app.canvas.clientWidth / 2 - center.x;
-        cameraRef.current.y = app.canvas.clientHeight / 2 - center.y;
+        // Auto-fit camera so the whole world is visible at game start, with
+        // a comfortable margin. After this, the user controls pan/zoom.
+        const b = worldBounds(props.state);
+        const padX = 60;
+        const padY = 100;
+        const cw = app.canvas.clientWidth;
+        const ch = app.canvas.clientHeight;
+        const zoom = Math.min(
+          (cw - padX * 2) / Math.max(1, b.width),
+          (ch - padY * 2) / Math.max(1, b.height),
+          1.4
+        );
+        cameraRef.current.zoom = Math.max(0.4, zoom);
+        cameraRef.current.x = cw / 2 - b.cx * cameraRef.current.zoom;
+        cameraRef.current.y = ch / 2 - b.cy * cameraRef.current.zoom;
         worldRoot.position.set(cameraRef.current.x, cameraRef.current.y);
         worldRoot.scale.set(cameraRef.current.zoom);
 
@@ -126,7 +137,7 @@ export function GameCanvas(props: Props) {
 // Rendering
 // =============================================================================
 
-function worldCenter(state: WorldSnapshot): { x: number; y: number } {
+function worldBounds(state: WorldSnapshot): { cx: number; cy: number; width: number; height: number } {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -138,7 +149,12 @@ function worldCenter(state: WorldSnapshot): { x: number; y: number } {
     if (p.x > maxX) maxX = p.x;
     if (p.y > maxY) maxY = p.y;
   }
-  return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+  return {
+    cx: (minX + maxX) / 2,
+    cy: (minY + maxY) / 2,
+    width: (maxX - minX) + HEX_SIZE * 2,
+    height: (maxY - minY) + HEX_SIZE * 2
+  };
 }
 
 function hexPolygonPath(centerX: number, centerY: number, size: number): number[] {
@@ -173,27 +189,40 @@ function renderAll(h: PixiHandles, props: Props): void {
     if (!seen) continue; // unseen tiles stay black
     const p = hexToPixel({ q: t.q, r: t.r }, HEX_SIZE);
     const biome = BIOMES[t.biome];
+    const baseAlpha = visible ? 1 : 0.45;
+
     const g = new Graphics();
+    // Slightly darker base for depth (drawn first).
     g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 0.5));
-    g.fill({ color: colorToHex(biome.color), alpha: visible ? 1 : 0.45 });
+    g.fill({ color: colorToHex(biome.outline), alpha: baseAlpha });
+
+    // Top-most fill — slightly inset so the darker rim shows = 3D-ish edge.
+    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 2));
+    g.fill({ color: colorToHex(biome.color), alpha: baseAlpha });
+
+    // Crisp outline so hex edges read on busy maps.
     g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 0.5));
-    g.stroke({ color: colorToHex(biome.outline), width: 1.5, alpha: visible ? 1 : 0.55 });
+    g.stroke({ color: 0x0c0e14, width: 0.8, alpha: visible ? 0.45 : 0.25 });
 
-    // Subtle inner highlight (crystalline edge).
-    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 4));
-    g.stroke({ color: 0xffffff, width: 0.6, alpha: visible ? 0.07 : 0.03 });
+    // Inner highlight along upper-left = subtle "lit from above".
+    const lit = hexPolygonPath(p.x - 1, p.y - 1, HEX_SIZE - 5);
+    g.poly(lit);
+    g.stroke({ color: 0xffffff, width: 0.7, alpha: visible ? 0.10 : 0.04 });
 
-    // Resource glyph as a small inner diamond.
+    // Per-biome decoration drawn into the same Graphics (saves draw calls).
+    decorateBiome(g, p.x, p.y, t.biome, baseAlpha);
+
+    tile.addChild(g);
+
+    // Resource glyph (after decoration so it sits on top).
     if (t.resource && visible) {
       const r = new Graphics();
       const rs = 5;
       r.poly([p.x, p.y - rs, p.x + rs, p.y, p.x, p.y + rs, p.x - rs, p.y]);
       r.fill({ color: resourceColor(t.resource) });
-      r.stroke({ color: 0x0c0e14, width: 1 });
-      tile.addChild(g, r);
-      continue;
+      r.stroke({ color: 0x0c0e14, width: 1.2 });
+      tile.addChild(r);
     }
-    tile.addChild(g);
   }
 
   // ---- Reachable overlay for selected unit ----
@@ -368,6 +397,115 @@ function drawUnitGlyph(cx: number, cy: number, type: string, factionColor: strin
   g.stroke({ color: 0x0c0e14, width: 2, join: "round" });
   c.addChild(g);
   return c;
+}
+
+/* =============================================================================
+ * Per-biome ornamentation drawn on top of the base hex fill. Each biome
+ * gets a distinctive silhouette pattern so the map reads as terrain,
+ * not as flat color cells.
+ * ========================================================================== */
+function decorateBiome(g: Graphics, cx: number, cy: number, biome: string, alpha: number): void {
+  switch (biome) {
+    case "mountain": {
+      // Three triangular peaks with a darker base, snow caps on top.
+      const peakBase = 0x4a4651;
+      const peakColor = 0x8c8896;
+      const snow = 0xffffff;
+      const rows: Array<[number, number, number]> = [
+        [-13, 6, 14], // x, y, h
+        [3, 8, 16],
+        [13, 4, 11]
+      ];
+      for (const [ox, oy, h] of rows) {
+        g.poly([cx + ox - 7, cy + oy, cx + ox + 7, cy + oy, cx + ox, cy + oy - h]);
+        g.fill({ color: peakColor, alpha });
+        g.poly([cx + ox - 7, cy + oy, cx + ox + 7, cy + oy, cx + ox, cy + oy - h]);
+        g.stroke({ color: peakBase, width: 1.2, alpha });
+        // Snow cap.
+        g.poly([cx + ox - 2.5, cy + oy - h + 4, cx + ox + 2.5, cy + oy - h + 4, cx + ox, cy + oy - h]);
+        g.fill({ color: snow, alpha: alpha * 0.85 });
+      }
+      break;
+    }
+    case "forest": {
+      // Three small evergreens.
+      const trunk = 0x3d2a16;
+      const leaves = 0x254f2a;
+      const positions: Array<[number, number]> = [[-9, 4], [4, -2], [9, 8]];
+      for (const [ox, oy] of positions) {
+        // Trunk
+        g.rect(cx + ox - 1, cy + oy + 1, 2, 4);
+        g.fill({ color: trunk, alpha });
+        // Triangle canopy (two layers).
+        g.poly([cx + ox - 5, cy + oy + 2, cx + ox + 5, cy + oy + 2, cx + ox, cy + oy - 5]);
+        g.fill({ color: leaves, alpha });
+        g.poly([cx + ox - 4, cy + oy - 1, cx + ox + 4, cy + oy - 1, cx + ox, cy + oy - 7]);
+        g.fill({ color: 0x1a3826, alpha });
+      }
+      break;
+    }
+    case "hill": {
+      // Two stacked round humps with a crest highlight.
+      const dark = 0x6f5731;
+      g.ellipse(cx - 7, cy + 6, 9, 5);
+      g.fill({ color: dark, alpha: alpha * 0.85 });
+      g.ellipse(cx + 6, cy + 4, 11, 6);
+      g.fill({ color: dark, alpha: alpha * 0.85 });
+      // Crest line on each hump.
+      g.moveTo(cx - 12, cy + 4).bezierCurveTo(cx - 9, cy + 1, cx - 4, cy + 1, cx - 2, cy + 4);
+      g.stroke({ color: 0xc6a872, width: 1.1, alpha: alpha * 0.7 });
+      g.moveTo(cx - 4, cy + 3).bezierCurveTo(cx + 3, cy - 1, cx + 12, cy - 1, cx + 16, cy + 3);
+      g.stroke({ color: 0xc6a872, width: 1.1, alpha: alpha * 0.7 });
+      break;
+    }
+    case "water": {
+      // Three slow horizontal wave lines.
+      const wave = 0xa8d1f0;
+      const rows: Array<[number, number]> = [[-12, -6], [-10, 2], [-12, 10]];
+      for (const [x0, y0] of rows) {
+        g.moveTo(cx + x0, cy + y0)
+          .bezierCurveTo(cx + x0 + 6, cy + y0 - 3, cx + x0 + 12, cy + y0 + 3, cx + x0 + 18, cy + y0)
+          .bezierCurveTo(cx + x0 + 22, cy + y0 - 1.5, cx + x0 + 24, cy + y0, cx + x0 + 24, cy + y0);
+        g.stroke({ color: wave, width: 1.3, alpha: alpha * 0.55 });
+      }
+      break;
+    }
+    case "desert": {
+      // Drifting dune curve + dot pattern.
+      g.moveTo(cx - 14, cy + 7).bezierCurveTo(cx - 6, cy + 1, cx + 6, cy + 11, cx + 14, cy + 5);
+      g.stroke({ color: 0xa3863e, width: 1.2, alpha: alpha * 0.7 });
+      const dots: Array<[number, number]> = [[-6, -4], [4, -7], [10, -2], [-9, 3]];
+      for (const [ox, oy] of dots) {
+        g.circle(cx + ox, cy + oy, 0.9);
+        g.fill({ color: 0xfff0c5, alpha: alpha * 0.7 });
+      }
+      break;
+    }
+    case "tundra": {
+      // Faint frost specks + a single thin pine.
+      const specks: Array<[number, number]> = [[-10, -6], [6, -4], [-3, 8], [10, 6]];
+      for (const [ox, oy] of specks) {
+        g.circle(cx + ox, cy + oy, 0.9);
+        g.fill({ color: 0xffffff, alpha: alpha * 0.55 });
+      }
+      g.rect(cx - 1, cy + 1, 2, 4);
+      g.fill({ color: 0x5b6864, alpha });
+      g.poly([cx - 4, cy + 1, cx + 4, cy + 1, cx, cy - 6]);
+      g.fill({ color: 0x4a5e58, alpha });
+      break;
+    }
+    case "plain": {
+      // Light grass tufts.
+      const tufts: Array<[number, number]> = [[-9, -2], [-2, 5], [7, -4], [10, 6]];
+      for (const [ox, oy] of tufts) {
+        g.moveTo(cx + ox, cy + oy + 2).lineTo(cx + ox, cy + oy - 2);
+        g.moveTo(cx + ox - 2, cy + oy + 1).lineTo(cx + ox - 2, cy + oy - 1);
+        g.moveTo(cx + ox + 2, cy + oy + 1).lineTo(cx + ox + 2, cy + oy - 1);
+        g.stroke({ color: 0x547a3a, width: 0.9, alpha: alpha * 0.75 });
+      }
+      break;
+    }
+  }
 }
 
 function resourceColor(r: string): number {
