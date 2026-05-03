@@ -109,7 +109,8 @@ export function GameCanvas(props: Props) {
         worldRoot.position.set(cameraRef.current.x, cameraRef.current.y);
         worldRoot.scale.set(cameraRef.current.zoom);
 
-        renderAll(handlesRef.current, props);
+        renderWorld(handlesRef.current, props.state, props.humanPlayerId);
+        renderOverlay(handlesRef.current, props.state, props.selection);
       });
 
     return () => {
@@ -125,10 +126,16 @@ export function GameCanvas(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ---- Re-render when state / selection changes ----
+  // World (tiles + units + cities) — heavy redraw, only when state changes.
   useEffect(() => {
-    if (handlesRef.current) renderAll(handlesRef.current, props);
-  }, [props]);
+    if (handlesRef.current) renderWorld(handlesRef.current, props.state, props.humanPlayerId);
+  }, [props.state, props.humanPlayerId]);
+
+  // Overlay (hover ring, selected unit ring, reachable hexes) — light redraw,
+  // runs on every hover/selection change without touching the world layers.
+  useEffect(() => {
+    if (handlesRef.current) renderOverlay(handlesRef.current, props.state, props.selection);
+  }, [props.state, props.selection]);
 
   return <div ref={hostRef} className="canvas-host" />;
 }
@@ -171,12 +178,9 @@ function colorToHex(c: string): number {
   return parseInt(c.replace("#", ""), 16);
 }
 
-function renderAll(h: PixiHandles, props: Props): void {
-  const { state, selection, humanPlayerId } = props;
-  const { tile, overlay, fog, sprites } = h.layers;
-
+function renderWorld(h: PixiHandles, state: WorldSnapshot, humanPlayerId: number): void {
+  const { tile, fog, sprites } = h.layers;
   tile.removeChildren();
-  overlay.removeChildren();
   fog.removeChildren();
   sprites.removeChildren();
 
@@ -192,22 +196,19 @@ function renderAll(h: PixiHandles, props: Props): void {
     const baseAlpha = visible ? 1 : 0.45;
 
     const g = new Graphics();
-    // Slightly darker base for depth (drawn first).
-    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 0.5));
+    // Slightly darker rim drawn first; the inner fill on top creates a soft
+    // bevel without a harsh outline that would dominate the map.
+    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE));
     g.fill({ color: colorToHex(biome.outline), alpha: baseAlpha });
 
-    // Top-most fill — slightly inset so the darker rim shows = 3D-ish edge.
-    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 2));
+    // Main fill, inset so just the bevel shows.
+    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 1));
     g.fill({ color: colorToHex(biome.color), alpha: baseAlpha });
 
-    // Crisp outline so hex edges read on busy maps.
-    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 0.5));
-    g.stroke({ color: 0x0c0e14, width: 0.8, alpha: visible ? 0.45 : 0.25 });
-
-    // Inner highlight along upper-left = subtle "lit from above".
-    const lit = hexPolygonPath(p.x - 1, p.y - 1, HEX_SIZE - 5);
-    g.poly(lit);
-    g.stroke({ color: 0xffffff, width: 0.7, alpha: visible ? 0.10 : 0.04 });
+    // Faint biome-toned outline — barely there, just enough to read tile
+    // boundaries without a "honeycomb grid" appearance.
+    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE));
+    g.stroke({ color: colorToHex(biome.outline), width: 0.6, alpha: visible ? 0.55 : 0.25 });
 
     // Per-biome decoration drawn into the same Graphics (saves draw calls).
     // rngHash gives variety so identical biomes don't repeat literally.
@@ -227,39 +228,6 @@ function renderAll(h: PixiHandles, props: Props): void {
     }
   }
 
-  // ---- Reachable overlay for selected unit ----
-  if (selection.selectedUnitId !== null && selection.reachableKeys.size > 0) {
-    for (const key of selection.reachableKeys) {
-      const [q, r] = key.split(",").map(Number);
-      const p = hexToPixel({ q: q!, r: r! }, HEX_SIZE);
-      const g = new Graphics();
-      g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 4));
-      g.fill({ color: 0x00d2c0, alpha: 0.18 });
-      overlay.addChild(g);
-    }
-  }
-
-  // ---- Hover ring ----
-  if (selection.hoveredHex) {
-    const p = hexToPixel(selection.hoveredHex, HEX_SIZE);
-    const g = new Graphics();
-    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 1));
-    g.stroke({ color: 0xffffff, width: 2, alpha: 0.85 });
-    overlay.addChild(g);
-  }
-
-  // ---- Selected unit ring ----
-  if (selection.selectedUnitId !== null) {
-    const u = state.units.find((uu) => uu.id === selection.selectedUnitId);
-    if (u) {
-      const p = hexToPixel({ q: u.q, r: u.r }, HEX_SIZE);
-      const g = new Graphics();
-      g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 2));
-      g.stroke({ color: 0xff5b3b, width: 3, alpha: 0.9 });
-      overlay.addChild(g);
-    }
-  }
-
   // ---- Cities ----
   for (const c of state.cities) {
     const t = state.tiles.find((tt) => tt.q === c.q && tt.r === c.r);
@@ -268,7 +236,10 @@ function renderAll(h: PixiHandles, props: Props): void {
     const p = hexToPixel({ q: c.q, r: c.r }, HEX_SIZE);
     const player = state.players.find((pp) => pp.id === c.ownerId);
     const factionColor = player ? FACTIONS[player.factionId].color : "#ffffff";
-    sprites.addChild(drawCitySettlement(p.x, p.y, factionColor, c.population));
+    const settlement = drawCitySettlement(p.x, p.y, factionColor, c.population);
+    settlement.scale.set(0.85);
+    settlement.position.set(p.x * 0.15, p.y * 0.15);
+    sprites.addChild(settlement);
 
     // City label below the settlement.
     const txt = new Text({
@@ -297,6 +268,9 @@ function renderAll(h: PixiHandles, props: Props): void {
     const def = UNITS[u.type];
 
     const g = drawUnitGlyph(p.x, p.y, u.type, factionColor);
+    // Units are travellers on a vast world — keep them dwarfed by terrain.
+    g.scale.set(0.65);
+    g.position.set(p.x * 0.35, p.y * 0.35);
     sprites.addChild(g);
 
     // HP bar (only when wounded)
@@ -331,6 +305,49 @@ function renderAll(h: PixiHandles, props: Props): void {
       g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 0.5));
       g.fill({ color: 0x000000, alpha: 0.32 });
       fog.addChild(g);
+    }
+  }
+}
+
+/**
+ * Lightweight overlay redraw — runs on every hover/selection change. The
+ * heavy world layers (tile/sprites/fog) stay untouched, which is what
+ * keeps mouse interaction snappy.
+ */
+function renderOverlay(h: PixiHandles, state: WorldSnapshot, selection: SelectionState): void {
+  const { overlay } = h.layers;
+  overlay.removeChildren();
+
+  // Reachable hexes for the selected unit.
+  if (selection.selectedUnitId !== null && selection.reachableKeys.size > 0) {
+    for (const key of selection.reachableKeys) {
+      const [q, r] = key.split(",").map(Number);
+      const p = hexToPixel({ q: q!, r: r! }, HEX_SIZE);
+      const g = new Graphics();
+      g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 4));
+      g.fill({ color: 0x00d2c0, alpha: 0.22 });
+      overlay.addChild(g);
+    }
+  }
+
+  // Hover ring.
+  if (selection.hoveredHex) {
+    const p = hexToPixel(selection.hoveredHex, HEX_SIZE);
+    const g = new Graphics();
+    g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 1));
+    g.stroke({ color: 0xffffff, width: 2, alpha: 0.85 });
+    overlay.addChild(g);
+  }
+
+  // Selected unit ring.
+  if (selection.selectedUnitId !== null) {
+    const u = state.units.find((uu) => uu.id === selection.selectedUnitId);
+    if (u) {
+      const p = hexToPixel({ q: u.q, r: u.r }, HEX_SIZE);
+      const g = new Graphics();
+      g.poly(hexPolygonPath(p.x, p.y, HEX_SIZE - 2));
+      g.stroke({ color: 0xff5b3b, width: 3, alpha: 0.9 });
+      overlay.addChild(g);
     }
   }
 }
@@ -893,6 +910,8 @@ function attachInput(
     if (movedDuringDrag < 6 && dt < 350) {
       props.onHexClick(clientToHex(e.clientX, e.clientY));
     }
+    // Refresh hover so the highlight tracks the click location promptly.
+    props.onHexHover(clientToHex(e.clientX, e.clientY));
   });
   canvas.addEventListener("mouseleave", () => {
     dragging = false;
@@ -959,6 +978,8 @@ function attachInput(
     } else if (e.touches.length < 2) {
       pinchStartDist = 0;
     }
+    // Touch leaves no cursor — clear the hover ring so nothing lingers.
+    props.onHexHover(null);
   });
 
   function zoomAt(clientX: number, clientY: number, factor: number) {
