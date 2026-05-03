@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0c0e14"/>
+      <stop offset="1" stop-color="#181c28"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5b3b"/>
+      <stop offset=".5" stop-color="#a778ff"/>
+      <stop offset="1" stop-color="#00d2c0"/>
+    </linearGradient>
+    <pattern id="hex" x="0" y="0" width="120" height="139" patternUnits="userSpaceOnUse">
+      <polygon points="60,0 120,35 120,104 60,139 0,104 0,35"
+               fill="none" stroke="#1d2233" stroke-width="1.4"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#hex)"/>
+  <polygon points="900,140 1010,200 1010,320 900,380 790,320 790,200"
+           fill="none" stroke="url(#g)" stroke-width="4" opacity=".9"/>
+  <polygon points="900,180 970,220 970,300 900,340 830,300 830,220"
+           fill="url(#g)" opacity=".18"/>
+  <text x="80" y="280" font-family="Inter, sans-serif" font-weight="900"
+        font-size="92" fill="#f3f4f8" letter-spacing="-2">NYRVEXA</text>
+  <text x="80" y="350" font-family="Inter, sans-serif" font-weight="700"
+        font-size="34" fill="#b6bbcd">A 4X strategy game.</text>
+  <text x="80" y="395" font-family="Inter, sans-serif" font-weight="700"
+        font-size="34" fill="#00d2c0">Browser. Mobile. Coming soon.</text>
+  <text x="80" y="560" font-family="Inter, sans-serif" font-weight="600"
+        font-size="20" fill="#6c7387" letter-spacing="3">USDTG GROUP TECHNOLOGY LLC</text>
+</svg>

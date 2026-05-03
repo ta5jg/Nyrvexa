@@ -1,0 +1,228 @@
+<!doctype html>
+<!-- =============================================================================
+File:           infra/landing/index.html
+Author:         USDTG GROUP TECHNOLOGY LLC
+Developer:      Irfan Gedik
+Created Date:   2026-05-03
+Last Update:    2026-05-03
+Version:        0.1.0
+
+Description:
+  Nyrvexa launch landing page — explains the pivot from Unity desktop to a
+  browser/mobile 4X. Acts as the public face of nyrvexa.com until the web
+  game is live, after which Caddy swaps file_server for reverse_proxy.
+
+License:
+  Proprietary. All rights reserved. See LICENSE in the repository root.
+============================================================================= -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0e14" />
+    <title>Nyrvexa — A 4X strategy game, soon in your browser</title>
+    <meta name="description" content="Map-first 4X strategy: explore, expand, exploit, exterminate. Built for browser and mobile. Coming soon." />
+    <meta property="og:title" content="Nyrvexa — A 4X Strategy Game" />
+    <meta property="og:description" content="Map-first 4X strategy. Browser and mobile. Coming soon." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nyrvexa.com" />
+    <meta property="og:image" content="https://nyrvexa.com/og.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://nyrduel.com" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Background hex weave (SVG, animated via CSS) -->
+    <div class="weave" aria-hidden="true">
+      <svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id="hex" x="0" y="0" width="120" height="139" patternUnits="userSpaceOnUse">
+            <polygon points="60,0 120,35 120,104 60,139 0,104 0,35"
+                     fill="none" stroke="#1d2233" stroke-width="1.2"/>
+            <polygon points="60,5 115,38 115,101 60,134 5,101 5,38"
+                     fill="none" stroke="#252a3e" stroke-width=".6" opacity=".6"/>
+          </pattern>
+          <radialGradient id="haze" cx="50%" cy="20%" r="55%">
+            <stop offset="0" stop-color="#ff5b3b" stop-opacity=".18"/>
+            <stop offset=".5" stop-color="#a778ff" stop-opacity=".09"/>
+            <stop offset="1" stop-color="#0c0e14" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="1600" height="900" fill="url(#hex)"/>
+        <rect width="1600" height="900" fill="url(#haze)"/>
+        <!-- accent shards -->
+        <polygon points="240,420 290,400 320,440 290,490 240,490 220,450" fill="#ff5b3b" opacity=".22"/>
+        <polygon points="1260,260 1310,250 1340,290 1310,340 1260,340 1240,300" fill="#00d2c0" opacity=".18"/>
+        <polygon points="900,640 950,620 990,660 950,700 900,700 880,670" fill="#a778ff" opacity=".18"/>
+      </svg>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <polygon points="12,1.5 22,7 22,17 12,22.5 2,17 2,7" fill="none" stroke="url(#bg)" stroke-width="1.6"/>
+            <defs>
+              <linearGradient id="bg" x1="0" y1="0" x2="24" y2="24">
+                <stop offset="0" stop-color="#ff5b3b"/>
+                <stop offset="1" stop-color="#00d2c0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="brand-name">NYRVEXA</span>
+      </a>
+      <nav class="topnav">
+        <a href="#vision">Vision</a>
+        <a href="#status">Status</a>
+        <a href="#siblings">More games</a>
+        <a class="cta-tiny" href="#signup">Notify me</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ============ HERO ============ -->
+      <section class="hero">
+        <div class="hero-eyebrow">v0.x · in active development</div>
+        <h1 class="hero-title">
+          <span class="t-line">A <em>map-first</em> 4X strategy</span>
+          <span class="t-line">built for the <em>browser</em></span>
+          <span class="t-line">and your <em>thumb</em>.</span>
+        </h1>
+        <p class="hero-sub">
+          Explore, expand, build, and outwit a daily AI rival across procedurally generated
+          continents. No download, no platform bias — open a tab, take your turn, get back to life.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#signup">Get the launch invite</a>
+          <a class="btn btn-ghost" href="#vision">What we're building →</a>
+        </div>
+        <div class="hero-meta">
+          <span><strong>One stack.</strong> TypeScript + WebGL. Same on every device.</span>
+          <span><strong>Original everything.</strong> No engine fees, no asset packs, no copy-cats.</span>
+        </div>
+      </section>
+
+      <!-- ============ VISION ============ -->
+      <section id="vision" class="section">
+        <div class="section-eyebrow">Vision</div>
+        <h2>Strategy that respects your time.</h2>
+        <div class="grid-3">
+          <article class="card">
+            <div class="card-icon" data-glyph="map" aria-hidden="true">
+              <svg viewBox="0 0 64 64" width="44" height="44">
+                <polygon points="32,4 56,18 56,46 32,60 8,46 8,18" fill="none" stroke="#ff5b3b" stroke-width="2"/>
+                <polygon points="32,16 44,23 44,38 32,45 20,38 20,23" fill="#ff5b3b" opacity=".22"/>
+                <circle cx="32" cy="31" r="3" fill="#ff5b3b"/>
+              </svg>
+            </div>
+            <h3>Map-first</h3>
+            <p>The hex board is the game. Biomes shape economy, terrain shapes battle, exploration unlocks the rest. No bloated UI — the map tells you what to do next.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" data-glyph="phone" aria-hidden="true">
+              <svg viewBox="0 0 64 64" width="44" height="44">
+                <rect x="20" y="6" width="24" height="52" rx="3" fill="none" stroke="#00d2c0" stroke-width="2"/>
+                <rect x="24" y="14" width="16" height="32" fill="#00d2c0" opacity=".22"/>
+                <circle cx="32" cy="52" r="2" fill="#00d2c0"/>
+              </svg>
+            </div>
+            <h3>Mobile-native</h3>
+            <p>One-thumb friendly. Pinch the map, tap a tile, queue a city, end your turn on the bus. Built mobile-first — desktop just gets a bigger window.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" data-glyph="bolt" aria-hidden="true">
+              <svg viewBox="0 0 64 64" width="44" height="44">
+                <polygon points="36,4 14,36 28,36 22,60 50,26 36,26" fill="none" stroke="#a778ff" stroke-width="2"/>
+                <polygon points="36,4 14,36 28,36 22,60 50,26 36,26" fill="#a778ff" opacity=".22"/>
+              </svg>
+            </div>
+            <h3>Browser-instant</h3>
+            <p>No installs, no store, no patch days. Open the URL, the game loads in a couple seconds, your save lives in the cloud, your friends can join the same link.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ STATUS / DEVLOG ============ -->
+      <section id="status" class="section section-dim">
+        <div class="section-eyebrow">Status</div>
+        <h2>What's already built — and what's next.</h2>
+        <ul class="timeline">
+          <li class="done">
+            <span class="t-tag">M1–M16</span>
+            <p>Deterministic headless 4X simulation, faction stats, M1 skirmish combat, biome economy, save/load — all stress-tested in the original Unity prototype.</p>
+          </li>
+          <li class="active">
+            <span class="t-tag">v0.1 web</span>
+            <p>Porting the engine to TypeScript, building a custom hex renderer + responsive HUD. Single-player vs AI, map of 12×8 tiles, three unit types, five-tech tree, domination win.</p>
+          </li>
+          <li>
+            <span class="t-tag">v0.2</span>
+            <p>Full tech tree, diplomacy drift, scout contact rumors, faction synergies, persistent profiles.</p>
+          </li>
+          <li>
+            <span class="t-tag">v0.3+</span>
+            <p>Async PvP (yesterday's winners become tomorrow's AI), USDTg-funded weekly leagues, player-made map seeds.</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============ SIBLINGS ============ -->
+      <section id="siblings" class="section">
+        <div class="section-eyebrow">More from USDTG GROUP</div>
+        <h2>While you wait, our other games are live.</h2>
+        <div class="grid-2">
+          <a class="game-card" href="https://nyrvexis.com">
+            <div class="game-card-mark">N</div>
+            <div>
+              <h3>Nyrvexis</h3>
+              <p>Faction-driven team battler with ~5–7 minute matches and Web3-funded prize pools.</p>
+              <span class="game-card-cta">Play →</span>
+            </div>
+          </a>
+          <a class="game-card" href="https://nyrduel.com">
+            <div class="game-card-mark">D</div>
+            <div>
+              <h3>Nyrduel</h3>
+              <p>The Daily Duel. Wordle-style 1v1 — same opponent worldwide, best score wins. New duel every UTC midnight.</p>
+              <span class="game-card-cta">Play today's →</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ SIGNUP ============ -->
+      <section id="signup" class="section signup">
+        <div class="section-eyebrow">Launch invite</div>
+        <h2>First in the door.</h2>
+        <p class="signup-sub">Drop your email — we'll send a single message the day Nyrvexa goes playable. No newsletter, no spam, no follow-up sequences.</p>
+        <form id="signup-form" class="signup-form" novalidate>
+          <input
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@somewhere.com"
+            aria-label="Email address"
+          />
+          <button type="submit" class="btn btn-primary">Notify me</button>
+        </form>
+        <p id="signup-status" class="signup-status" aria-live="polite"></p>
+        <p class="signup-fallback">Form not working? <a href="mailto:hello@nyrvexa.com?subject=Notify%20me%20when%20Nyrvexa%20launches">Email us directly</a>.</p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="foot-row">
+        <span>© 2026 USDTG GROUP TECHNOLOGY LLC. Nyrvexa™. All rights reserved.</span>
+        <span class="foot-links">
+          <a href="https://github.com/ta5jg/Nyrvexa">Source</a>
+          <a href="mailto:hello@nyrvexa.com">Contact</a>
+        </span>
+      </div>
+    </footer>
+
+    <script src="/main.js" defer></script>
+  </body>
+</html>

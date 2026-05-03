@@ -1,0 +1,75 @@
+# =============================================================================
+# File:           infra/Caddyfile
+# Author:         USDTG GROUP TECHNOLOGY LLC
+# Developer:      Irfan Gedik
+# Created Date:   2026-05-03
+# Last Update:    2026-05-03
+# Version:        0.1.0
+#
+# Description:
+#   Caddy reverse proxy + automatic HTTPS for the three games. Caddy obtains
+#   and renews Let's Encrypt certs on its own as long as the domains' A
+#   records point at this server. Each site sends www → apex via 301.
+#
+# License:
+#   Proprietary. All rights reserved. See LICENSE in the repository root.
+# =============================================================================
+
+{
+	email irfangedik@gmail.com
+	# Uncomment for staging while you're testing — avoids rate limits.
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# ---------- nyrvexis.com ----------
+www.nyrvexis.com {
+	redir https://nyrvexis.com{uri} 301
+}
+
+nyrvexis.com {
+	encode gzip zstd
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	reverse_proxy nyrvexis:8787
+}
+
+# ---------- nyrduel.com ----------
+www.nyrduel.com {
+	redir https://nyrduel.com{uri} 301
+}
+
+nyrduel.com {
+	encode gzip zstd
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	reverse_proxy nyrduel:8788
+}
+
+# ---------- nyrvexa.com ----------
+# Currently a static landing page. Once the web Nyrvexa app is shipped,
+# replace `file_server` with `reverse_proxy nyrvexa:8789` and remove `root`.
+www.nyrvexa.com {
+	redir https://nyrvexa.com{uri} 301
+}
+
+nyrvexa.com {
+	encode gzip zstd
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Cache-Control "public, max-age=300"
+	}
+	root * /srv/landing
+	try_files {path} /index.html
+	file_server
+}

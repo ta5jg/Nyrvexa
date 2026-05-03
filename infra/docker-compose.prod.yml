@@ -1,0 +1,82 @@
+# =============================================================================
+# File:           infra/docker-compose.prod.yml
+# Author:         USDTG GROUP TECHNOLOGY LLC
+# Developer:      Irfan Gedik
+# Created Date:   2026-05-03
+# Last Update:    2026-05-03
+# Version:        0.1.0
+#
+# Description:
+#   Production stack for the USDTG game suite — Caddy reverse-proxy fronting
+#   nyrvexis, nyrduel, and a static landing page for nyrvexa. Build contexts
+#   resolve to sibling git checkouts on the server (see infra/README.md).
+#
+# License:
+#   Proprietary. All rights reserved. See LICENSE in the repository root.
+# =============================================================================
+
+name: usdtg-stack
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./landing:/srv/landing:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - nyrvexis
+      - nyrduel
+    networks:
+      - web
+
+  nyrvexis:
+    build:
+      context: ../../nyrvexis
+    restart: unless-stopped
+    expose:
+      - "8787"
+    environment:
+      NODE_ENV: production
+      KR_HOST: 0.0.0.0
+      KR_PORT: "8787"
+      CORS_ORIGIN: "https://nyrvexis.com,https://www.nyrvexis.com"
+    volumes:
+      - nyrvexis_data:/app/data
+    networks:
+      - web
+
+  nyrduel:
+    build:
+      context: ../../nyrduel
+    restart: unless-stopped
+    expose:
+      - "8788"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8788"
+      DB_PATH: /app/data/nyrduel.sqlite
+      CORS_ORIGIN: "https://nyrduel.com,https://www.nyrduel.com,https://nyrvexa.com"
+      PRIZE_POOL_USDTG: "100"
+      TRUST_PROXY: "172.16.0.0/12,10.0.0.0/8,127.0.0.0/8"
+    volumes:
+      - nyrduel_data:/app/data
+    networks:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
+  nyrvexis_data:
+  nyrduel_data:
+
+networks:
+  web:
+    driver: bridge

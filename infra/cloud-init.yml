@@ -1,0 +1,95 @@
+#cloud-config
+# =============================================================================
+# File:           infra/cloud-init.yml
+# Author:         USDTG GROUP TECHNOLOGY LLC
+# Developer:      Irfan Gedik
+# Created Date:   2026-05-03
+# Last Update:    2026-05-03
+# Version:        0.1.0
+#
+# Description:
+#   Hetzner cloud-init bootstrap for a fresh Ubuntu 24.04 box. Installs Docker
+#   + compose plugin, locks down SSH (key-only), enables UFW with the minimum
+#   ports, prepares /srv layout, and adds a deploy user.
+#
+#   Usage: paste into Hetzner Console → Create Server → Cloud Config (raw).
+#   Replace SSH_PUBLIC_KEY_HERE with your actual public key before submitting.
+#
+# License:
+#   Proprietary. All rights reserved. See LICENSE in the repository root.
+# =============================================================================
+
+hostname: usdtg-prod
+manage_etc_hosts: true
+timezone: UTC
+
+users:
+  - name: deploy
+    groups: [sudo, docker]
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - SSH_PUBLIC_KEY_HERE
+
+package_update: true
+package_upgrade: true
+packages:
+  - ca-certificates
+  - curl
+  - git
+  - htop
+  - ufw
+  - fail2ban
+  - unattended-upgrades
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/99-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      ChallengeResponseAuthentication no
+      X11Forwarding no
+      MaxAuthTries 3
+      ClientAliveInterval 300
+      ClientAliveCountMax 2
+    permissions: '0644'
+
+  - path: /etc/sysctl.d/99-network.conf
+    content: |
+      net.ipv4.tcp_syncookies = 1
+      net.ipv4.conf.all.rp_filter = 1
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv6.conf.all.accept_redirects = 0
+    permissions: '0644'
+
+runcmd:
+  # ---- Docker (official repo) ----
+  - install -m 0755 -d /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - chmod a+r /etc/apt/keyrings/docker.asc
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  - systemctl enable --now docker
+  # ---- UFW: only 22, 80, 443 ----
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw allow 443/udp
+  - ufw --force enable
+  # ---- /srv layout ----
+  - mkdir -p /srv
+  - chown deploy:deploy /srv
+  # ---- Restart sshd to pick up hardening ----
+  - systemctl restart ssh
+  # ---- Sysctl ----
+  - sysctl -p /etc/sysctl.d/99-network.conf
+  # ---- Auto security updates ----
+  - dpkg-reconfigure --priority=low unattended-upgrades
+
+final_message: |
+  USDTG production host ready. SSH as: deploy@<server-ip>
+  Next: clone the three repos under /srv and run infra/deploy.sh.
