@@ -1,0 +1,57 @@
+# =============================================================================
+# File:           .dockerignore
+# Author:         USDTG GROUP TECHNOLOGY LLC
+# Developer:      Irfan Gedik
+# Created Date:   2026-05-03
+# Last Update:    2026-05-03
+# Version:        0.1.0
+#
+# Description:
+#   Exclude Unity binaries, generated artifacts, and infra from the Docker
+#   build context for the web port. Keeps the build small and fast.
+#
+# License:
+#   Proprietary. All rights reserved. See LICENSE in the repository root.
+# =============================================================================
+
+# ---- Unity stuff (not needed for the web port build) ----
+Assets/
+Library/
+Logs/
+Packages/
+ProjectSettings/
+UserSettings/
+mod-pack-example/
+docs/
+tools/
+Makefile
+SECURITY.md
+THIRD_PARTY.md
+CHANGELOG.md
+*.csproj
+*.sln
+*.unityproj
+
+# ---- Web port artifacts (regenerated in container) ----
+node_modules
+**/node_modules
+dist
+**/dist
+.turbo
+.cache
+coverage
+**/coverage
+*.log
+*.tsbuildinfo
+
+# ---- Misc ----
+.git
+.github
+.idea
+.vscode
+.DS_Store
+data
+*.sqlite
+
+# ---- Infra (deploy stack — not part of the runtime image) ----
+infra/

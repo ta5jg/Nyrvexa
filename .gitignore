@@ -35,3 +35,19 @@ tools/SimRunner/obj/
 # OS
 .DS_Store
 Thumbs.db
+
+# Web port (TS / pnpm / Vite / Vitest)
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.turbo/
+.cache/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+data/
+*.sqlite
+*.sqlite-journal

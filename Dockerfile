@@ -19,7 +19,7 @@ RUN corepack enable
 WORKDIR /app
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* .npmrc* ./
 COPY tsconfig.base.json ./
-COPY packages ./packages
+COPY libs ./libs
 COPY services ./services
 COPY apps ./apps
 RUN pnpm install --no-frozen-lockfile
@@ -37,7 +37,7 @@ ENV DB_PATH=/app/data/nyrvexa.sqlite
 COPY --from=build /app/services/gateway/dist ./services/gateway/dist
 COPY --from=build /app/services/gateway/package.json ./services/gateway/
 COPY --from=build /app/apps/web/dist ./apps/web/dist
-COPY --from=build /app/packages ./packages
+COPY --from=build /app/libs ./libs
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/services/gateway/node_modules ./services/gateway/node_modules
 RUN mkdir -p /app/data

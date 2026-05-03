@@ -74,9 +74,11 @@ services:
 
   nyrvexa:
     build:
-      # The Nyrvexa repo is a hybrid: Unity at the root, web port under web/.
-      # Build context points at the web/ subdirectory.
-      context: ../web
+      # The Nyrvexa repo holds both the Unity legacy (Assets/, Library/, …)
+      # and the active TS web port (apps/, services/, packages/) at the
+      # repository root. Docker build uses .dockerignore at the root to
+      # skip Unity-only paths.
+      context: ..
     restart: unless-stopped
     expose:
       - "8789"
