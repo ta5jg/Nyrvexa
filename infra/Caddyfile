@@ -54,8 +54,10 @@ nyrduel.com {
 }
 
 # ---------- nyrvexa.com ----------
-# Currently a static landing page. Once the web Nyrvexa app is shipped,
-# replace `file_server` with `reverse_proxy nyrvexa:8789` and remove `root`.
+# Web 4X game (PixiJS + React). The gateway both serves the SPA bundle and
+# exposes /saves, /results, /leaderboard. To roll back to the marketing
+# landing page, comment out the reverse_proxy and uncomment the file_server
+# block below.
 www.nyrvexa.com {
 	redir https://nyrvexa.com{uri} 301
 }
@@ -67,9 +69,11 @@ nyrvexa.com {
 		X-Content-Type-Options nosniff
 		X-Frame-Options DENY
 		Referrer-Policy strict-origin-when-cross-origin
-		Cache-Control "public, max-age=300"
 	}
-	root * /srv/landing
-	try_files {path} /index.html
-	file_server
+	reverse_proxy nyrvexa:8789
+
+	# # ---- Marketing landing fallback (kept for emergencies) ----
+	# root * /srv/landing
+	# try_files {path} /index.html
+	# file_server
 }

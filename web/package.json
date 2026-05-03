@@ -1,0 +1,26 @@
+{
+  "name": "nyrvexa-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nyrvexa — browser/mobile 4X strategy game. Web port of the Unity prototype.",
+  "license": "UNLICENSED",
+  "author": "USDTG GROUP TECHNOLOGY LLC <hello@nyrvexa.com>",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter \"./apps/*\" --filter \"./services/*\" run dev",
+    "dev:web": "pnpm --filter @nyrvexa/web dev",
+    "dev:gateway": "pnpm --filter @nyrvexa/gateway dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=22.16",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

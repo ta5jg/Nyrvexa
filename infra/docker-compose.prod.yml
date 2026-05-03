@@ -33,6 +33,7 @@ services:
     depends_on:
       - nyrvexis
       - nyrduel
+      - nyrvexa
     networks:
       - web
 
@@ -71,11 +72,32 @@ services:
     networks:
       - web
 
+  nyrvexa:
+    build:
+      # The Nyrvexa repo is a hybrid: Unity at the root, web port under web/.
+      # Build context points at the web/ subdirectory.
+      context: ../web
+    restart: unless-stopped
+    expose:
+      - "8789"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8789"
+      DB_PATH: /app/data/nyrvexa.sqlite
+      CORS_ORIGIN: "https://nyrvexa.com,https://www.nyrvexa.com"
+      TRUST_PROXY: "172.16.0.0/12,10.0.0.0/8,127.0.0.0/8"
+    volumes:
+      - nyrvexa_data:/app/data
+    networks:
+      - web
+
 volumes:
   caddy_data:
   caddy_config:
   nyrvexis_data:
   nyrduel_data:
+  nyrvexa_data:
 
 networks:
   web:
